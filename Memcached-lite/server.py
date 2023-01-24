@@ -83,3 +83,12 @@ def chat_server(iface:str, port:int, use_udp:bool) -> None:
                 s.sendto(data.encode(),addr)
             if data == str("exit"):
                 s.close()
+
+def __name__ = '__main__':
+    try:
+        hostname = socket.gethostname()
+        host = socket.gethostbyname(hostname)
+        # Add to check if argument is there or not
+        ThreadedServer(host, int(sys.argv[1]))
+    except Exception as e:
+        print(e)
