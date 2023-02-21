@@ -1,6 +1,7 @@
 
 from multiprocessing import Process
 import xmlrpc.server
+import xmlrpc.client
 import os
 import socket
 import threading
@@ -15,28 +16,39 @@ from time import sleep
 # import math
 
 def init_rpc_master_server(master_address, master_port):
+    global server
     with xmlrpc.server.SimpleXMLRPCServer((master_address, int(master_port)),logRequests=False,allow_none=True) as server:
     
-        def mapper_finished(mapper_id):
-            # print(f"Mapper {mapper_id} finished processing")
-            mapper_progress[int(mapper_id)] = "FINISHED"
-            return True
-        server.register_function(mapper_finished, 'mapper_finished')
+        def mapper_report_status(mapper_id, status):
+            mapper_progress[int(mapper_id)] = status
+        server.register_function(mapper_report_status, 'mapper_report_status')
+
+        def reducer_report_status(reducer_id, status):
+            reducer_progress[int(reducer_id)] = status
+        server.register_function(reducer_report_status, 'reducer_report_status')
+
         server.serve_forever()
 
-def handle_mapper(mapper_id, database_server, database_port, master_address, master_port):
+
+def handle_database_server(database_server, database_port):
+    cmd = f"python3 database_server.py {database_server} {database_port}"
+    os.system(cmd)
+
+
+def handle_mapper(mapper_id, database_server, database_port, master_address, master_port, no_of_reducers):
     # print(f"Mapper {mapper_id} started")
     # print(f"I'm mapper {mapper_id} in master, my parent process is {os.getppid()} and process id is {os.getpid()}")
     # print("###############################")
 
     # Its not possible to run this new script in the same process???
-    cmd = f"python3 mapper_word_count.py {mapper_id} {database_server} {database_port} {master_address} {master_port}"
+    cmd = f"python3 mapper_word_count.py {mapper_id} {database_server} {database_port} {master_address} {master_port} {no_of_reducers}"
     os.system(cmd)
 
     
-def handle_database_server(database_server, database_port):
-    cmd = f"python3 database_server.py {database_server} {database_port}"
+def handle_reducer(reducer_id, database_server, database_port, master_address, master_port):
+    cmd = f"python3 reducer_word_count.py {reducer_id} {database_server} {database_port} {master_address} {master_port}"
     os.system(cmd)
+
 
 
 if __name__ == '__main__':
@@ -59,10 +71,12 @@ if __name__ == '__main__':
     threading.Thread(target = init_rpc_master_server,args=(master_address, master_port)).start()
     sleep(2)
 
+    db_server = xmlrpc.client.ServerProxy(f'http://{database_server}:{database_port}/')
+
     f = open(f"{file_to_use}", "r")
     words = []
     for word in f.read().split():
-        new_str = re.sub('[^a-zA-Z0-9]', '', word)
+        new_str = re.sub('[^a-zA-Z0-9\-]', '', word)
         words.append(new_str)
     f.close()
 
@@ -92,7 +106,7 @@ if __name__ == '__main__':
     mapper_progress = {}
     for i in range(no_of_mappers):
         mapper_progress[i + 1] = "IN PROGRESS" 
-        p = Process(target=handle_mapper, args=(i + 1, database_server, database_port, master_address, master_port,))
+        p = Process(target=handle_mapper, args=(i + 1, database_server, database_port, master_address, master_port, no_of_reducers,))
         p.start()
     
     # Barrier
@@ -101,16 +115,56 @@ if __name__ == '__main__':
     while not all_mappers_finished:
         sleep(2)
         for mapper_id in mapper_progress:
-            if mapper_progress[mapper_id] != 'FINISHED':
+            if mapper_progress[mapper_id] == "FAILED":
+                p = Process(target=handle_mapper, args=(mapper_id, database_server, database_port, master_address, master_port, no_of_reducers,))
+                p.start()
+                break
+            if mapper_progress[mapper_id] != "DONE":
                 break
             all_mappers_finished = True
 
     print("All the Mappers have Finished Processing and Barrier is down")
+    # mappers_output = db_server.get_mapper_output()
+    # print(mappers_output)
+
+    global reducer_progress
+    reducer_progress = {}
+    for i in range(no_of_reducers):
+        reducer_progress[i + 1] = "IN PROGRESS" 
+        p = Process(target=handle_reducer, args=(i + 1, database_server, database_port, master_address, master_port,))
+        p.start()
+    
+    all_reducers_finished = False
+    while not all_reducers_finished:
+        sleep(2)
+        for reducer_id in mapper_progress:
+            if reducer_progress[reducer_id] == "FAILED":
+                p = Process(target=handle_reducer, args=(reducer_id, database_server, database_port, master_address, master_port,))
+                p.start()
+                break
+            if reducer_progress[reducer_id] != 'DONE':
+                break
+            all_reducers_finished = True
+
+    print("All the Reducers have Finished Processing")
+    
+    db_server.stop_database_server()
+    server.shutdown()
+    
+    # sys.exit(0)
     
 
     
 
+
+
+
     
+
+    
+
+    
+
 
 
 
@@ -135,6 +189,7 @@ if __name__ == '__main__':
 # If a mapper or reducer fails, then master will start that process again. --> fault tolerence
 
 
+# should I consider upper and lower case words as 2 seperate??
 # should we return the mepper output to master and then store in KV store??
 # what if master fails????
 # Should we have fixed number of mappers and reduces?? or should it vary based in the inout size???
