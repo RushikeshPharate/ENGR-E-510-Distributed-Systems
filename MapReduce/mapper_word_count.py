@@ -32,9 +32,14 @@ def mapper():
         m_server.mapper_report_status(mapper_id, "FAILED")
         return
 
-    f = open("mappers.txt", 'r')
-    words = json.loads(f.read())[f"mapper {mapper_id}"]
-    f.close()
+    try:
+        db_server = xmlrpc.client.ServerProxy(f'http://{database_server}:{database_port}/')
+    except Exception as e:
+        print("Exception occurred in connecting from mapper to db server: ", e)
+        m_server.mapper_report_status(mapper_id, "FAILED")
+        return
+
+    words = db_server.get_mapper_input(mapper_id)
 
     mapper_output = {}
     for word in words:
@@ -42,15 +47,8 @@ def mapper():
         if reducer_id not in mapper_output:
             mapper_output[reducer_id] = []
         mapper_output[reducer_id].append((word,1))
-
-    try:
-        db_server = xmlrpc.client.ServerProxy(f'http://{database_server}:{database_port}/')
-        result = db_server.set_mapper_output(mapper_output)
-    except Exception as e:
-        print("Exception occurred in connecting from mapper to db server: ", e)
-        m_server.mapper_report_status(mapper_id, "FAILED")
-        return
-
+        
+    result = db_server.set_mapper_output(mapper_output)
     m_server.mapper_report_status(mapper_id, "DONE")
 
     # Not able to find any method that will close this client connection
