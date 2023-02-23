@@ -112,7 +112,7 @@ def main():
         def stop_database_server():
             print("Kill database request received from master")
             server.shutdown()
-            sys.exit(0)
+            os.kill(os.getpid(), signal.SIGKILL)
             # return True
         server.register_function(stop_database_server, "stop_database_server")
         server.serve_forever()

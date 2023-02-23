@@ -9,10 +9,10 @@ import json
 import sys
 # import re
 import logging
+import signal
 
 from dotenv import load_dotenv
-from time import sleep
-
+from time import sleep, time
 
 
 def setup_custom_logger(name):
@@ -28,25 +28,113 @@ def setup_custom_logger(name):
     logger.addHandler(screen_handler)
     return logger
 
-# def mapper_progress_checker():
+
+def mapper_progress_checker(mapper_id, p, mapper_address, mapper_port):
+    start_time = time()
+    mapper_server = xmlrpc.client.ServerProxy(f'http://{mapper_address}:{mapper_port}/') 
+    prog = 0
+    temp1 = -1
+    temp2 = -2
+    temp3 = -3
+    while prog != 100:
+        try:
+            prog = int(mapper_server.get_mapper_progress())
+        except Exception as e:
+            logger.error(f"Mapper {mapper_id} is not responding - [Connection Refused]")
+            logger.info(f"Terminating mapper {mapper_id}")
+            p.kill()
+            # p.close()
+            sleep(2)
+            mapper_status[mapper_id] = "FAILED"
+            return
+        temp3 = temp2
+        temp2 = temp1
+        temp1 = prog
+        if prog != 0 and temp1 == temp2 == temp3:
+            logger.error(f"Mapper {mapper_id} is not processing - [No Progress]")
+            logger.info(f"Terminating mapper {mapper_id}")
+            p.kill()
+            # p.close()
+            sleep(2)
+            mapper_status[mapper_id] = "FAILED"
+            return
+        elif prog == 0:
+            curr_time = time()
+            if curr_time - start_time > 30:
+                logger.error(f"Mapper {mapper_id} is not processing - [30 sec Time Limit Exceeded")
+                logger.info(f"Terminating mapper {mapper_id}")
+                p.kill()
+                # p.close()
+                sleep(2)
+                mapper_status[mapper_id] = "FAILED"
+                return
+
+        sleep(2)
+        logger.info(f"Mapper {mapper_id} progress: {prog}%")
+
+    logger.info(f"Mapper {mapper_id} finished processing")
+    mapper_status[mapper_id] = "DONE"
+    mapper_set.remove(mapper_id)
+    p.terminate()
+    # p.kill()
+    # p.close()
+    mapper_server.stop_mapper_server()
+    mapper_server.close()
+    return
 
 
+def reducer_progress_checker(reducer_id, p, reducer_address, reducer_port):
+    start_time = time()
+    reducer_server = xmlrpc.client.ServerProxy(f'http://{reducer_address}:{reducer_port}/') 
+    prog = 0
+    temp1 = -1
+    temp2 = -2
+    temp3 = -3
+    while prog != 100:
+        try:
+            prog = int(reducer_server.get_reducer_progress())
+        except Exception as e:
+            logger.error(f"Reducer {reducer_id} is not responding - [Connection Refused]")
+            logger.info(f"Terminating reducer {reducer_id}")
+            p.kill()
+            # p.close()
+            sleep(2)
+            reducer_status[reducer_id] = "FAILED"
+            return
+        temp3 = temp2
+        temp2 = temp1
+        temp1 = prog
+        if prog != 0 and temp1 == temp2 == temp3:
+            logger.error(f"Reducer {reducer_id} is not processing - [No Progress]")
+            logger.info(f"Terminating reducer {reducer_id}")
+            p.kill()
+            # p.close()
+            sleep(2)
+            reducer_status[reducer_id] = "FAILED"
+            return
+        elif prog == 0:
+            curr_time = time()
+            if curr_time - start_time > 30:
+                logger.error(f"Reducer {reducer_id} is not processing - [30 sec Time Limit Exceeded]")
+                logger.info(f"Terminating reducer {reducer_id}")
+                p.kill()
+                # p.close()
+                sleep(2)
+                reducer_status[reducer_id] = "FAILED"
+                return
 
+        sleep(2)
+        logger.info(f"Reducer {reducer_id} progress: {prog}%")
 
-
-def init_rpc_master_server(master_address, master_port):
-    global server
-    with xmlrpc.server.SimpleXMLRPCServer((master_address, int(master_port)),logRequests=False,allow_none=True) as server:
-    
-        def mapper_report_status(mapper_id, status):
-            mapper_progress[int(mapper_id)] = status
-        server.register_function(mapper_report_status, 'mapper_report_status')
-
-        def reducer_report_status(reducer_id, status):
-            reducer_progress[int(reducer_id)] = status
-        server.register_function(reducer_report_status, 'reducer_report_status')
-
-        server.serve_forever()
+    logger.info(f"Reducer {reducer_id} finished processing")
+    reducer_status[reducer_id] = "DONE"
+    reducer_set.remove(reducer_id)
+    p.terminate()
+    # p.kill()
+    # p.close()
+    reducer_server.stop_reducer_server()
+    reducer_server.close()
+    return
 
 
 def handle_database_server(database_server, database_port):
@@ -54,42 +142,46 @@ def handle_database_server(database_server, database_port):
     os.system(cmd)
 
 
-def handle_mapper(mapper_id, database_server, database_port, master_address, master_port, no_of_reducers):
+def handle_mapper(mapper_id, database_server, database_port, master_address, master_port, no_of_reducers, mapper_address, mapper_port):
     # print(f"I'm mapper {mapper_id} in master, my parent process is {os.getppid()} and process id is {os.getpid()}"
 
     # Its not possible to run this new script in the same process???
-    cmd = f"python3 mapper_word_count.py {mapper_id} {database_server} {database_port} {master_address} {master_port} {no_of_reducers}"
+    cmd = f"python3 mapper_word_count.py {mapper_id} {database_server} {database_port} {master_address} {master_port} {no_of_reducers} {mapper_address} {mapper_port}"
     os.system(cmd)
 
     
-def handle_reducer(reducer_id, database_server, database_port, master_address, master_port):
-    cmd = f"python3 reducer_word_count.py {reducer_id} {database_server} {database_port} {master_address} {master_port}"
+def handle_reducer(reducer_id, database_server, database_port, master_address, master_port, reducer_address, reducer_port):
+    cmd = f"python3 reducer_word_count.py {reducer_id} {database_server} {database_port} {master_address} {master_port} {reducer_address} {reducer_port}"
     os.system(cmd)
 
 
 if __name__ == '__main__':
-    load_dotenv()
     global logger
     global mappers_progress
+    global mapper_status
+    global mapper_set
     global reducer_progress
+    global reducer_status
+    global reducer_set
 
-    master_address = os.getenv("MASTER_ADDRESS")
-    master_port = int(os.getenv("MASTER_PORT"))
-    database_server = os.getenv("DATABASE_SERVER")
-    database_port = int(os.getenv("DATABASE_PORT"))
-    no_of_mappers = int(os.getenv("NO_OF_MAPPERS"))
-    no_of_reducers = int(os.getenv("NO_OF_REDUCERS"))
-    # file_to_use = os.getenv("TXT_FILE_TO_USE")
+    data = json.load(open('userInput.json'))
+
+    master_address = data["MASTER_ADDRESS"]
+    master_port = int(data["MASTER_PORT"])
+    database_server = data["DATABASE_SERVER"]
+    database_port = int(data["DATABASE_PORT"])
+    no_of_mappers = int(data["NO_OF_MAPPERS"])
+    no_of_reducers = int(data["NO_OF_REDUCERS"])
+    mapper_details = data["MAPPER_DETAILS"]
+    reducer_details = data["REDUCER_DETAILS"]
 
     logger = setup_custom_logger("mapreduce")
     logger.info(f"Master Node started on {master_address}:{master_port}")
 
     # Starting database server
-    p = Process(target=handle_database_server, args=(database_server, database_port,))
-    p.start()
+    database_process = Process(target=handle_database_server, args=(database_server, database_port,))
+    database_process.start()
     logger.info(f"Database Server started on {database_server}:{database_port}")
-    sleep(2)
-    threading.Thread(target = init_rpc_master_server,args=(master_address, master_port)).start()
     sleep(2)
 
     db_server = xmlrpc.client.ServerProxy(f'http://{database_server}:{database_port}/')
@@ -118,83 +210,98 @@ if __name__ == '__main__':
     logger.info(f"Starting {no_of_mappers} mappers")
     
     mapper_progress = {}
+    mapper_status = {}
+    mapper_set = set()
     for i in range(no_of_mappers):
-        mapper_progress[i + 1] = "PROCESSING" 
-        p = Process(target=handle_mapper, args=(i + 1, database_server, database_port, master_address, master_port, no_of_reducers,))
+        p = Process(target=handle_mapper, args=(i + 1, database_server, database_port, master_address, master_port, no_of_reducers, mapper_details[i][0], mapper_details[i][1]))
         p.start()
+        mapper_progress[i + 1] = p 
+        mapper_status[i + 1] = "PROCESSING"
+        mapper_set.add(i + 1)
         logger.info(f"Mapper {i + 1} is up")
-    
+
+    sleep(3)
+
     # Mapper Barrier
     logger.info("Barrier is UP")
+    for mapper_id in mapper_progress:
+        threading.Thread(target = mapper_progress_checker, args = (mapper_id, mapper_progress[mapper_id], mapper_details[mapper_id - 1][0], mapper_details[mapper_id - 1][1])).start()
+    
+    sleep(2)
+
     all_mappers_finished = False
     while not all_mappers_finished:
-        sleep(1)
-        for mapper_id in mapper_progress:
-            logger.info(f"Mapper {mapper_id} status is: {mapper_progress[mapper_id]}")
-        for mapper_id in mapper_progress:
-            if mapper_progress[mapper_id] == "FAILED":
-                p = Process(target=handle_mapper, args=(mapper_id, database_server, database_port, master_address, master_port, no_of_reducers,))
+        sleep(4)
+        for mapper_id in mapper_status:
+            if mapper_status[mapper_id] == "PROCESSING":
+                continue
+            if mapper_status[mapper_id] == "FAILED":
+                logger.info(f"Starting mapper {mapper_id} again on {mapper_details[mapper_id - 1][0]}:{mapper_details[mapper_id - 1][1]}")
+                p = Process(target=handle_mapper, args=(mapper_id, database_server, database_port, master_address, master_port, no_of_reducers, mapper_details[mapper_id - 1][0], mapper_details[mapper_id - 1][1]))
                 p.start()
+                sleep(2)
+                threading.Thread(target = mapper_progress_checker, args = (mapper_id, mapper_progress[mapper_id], mapper_details[mapper_id - 1][0], mapper_details[mapper_id - 1][1])).start()
+                sleep(2)
+                # logger.info(f"MAPPER {mapper_id} IS STARTED AGAIN")
+                mapper_progress[mapper_id] = p
+                mapper_status[mapper_id] = "PROCESSING"
                 break
-            if mapper_progress[mapper_id] != "DONE":
-                break
-            all_mappers_finished = True
-
+            if not mapper_set:
+                all_mappers_finished = True
+    sleep(3)
+    # print(mapper_status)
     logger.info("All the Mappers have Finished Processing and Barrier is down")
 
     logger.info(f"Starting {no_of_reducers} reducers")
     reducer_progress = {}
+    reducer_status = {}
+    reducer_set = set()
     for i in range(no_of_reducers):
-        reducer_progress[i + 1] = "PROCESSING" 
-        p = Process(target=handle_reducer, args=(i + 1, database_server, database_port, master_address, master_port,))
+        p = Process(target=handle_reducer, args=(i + 1, database_server, database_port, master_address, master_port, reducer_details[i][0], reducer_details[i][1]))
         p.start()
+        reducer_progress[i + 1] = p
+        reducer_status[i + 1] = "PROCESSING"
+        reducer_set.add(i + 1)
         logger.info(f"Reducer {i + 1} is up")
     
+    sleep(3)
+
+    for reducer_id in reducer_progress:
+        threading.Thread(target = reducer_progress_checker, args = (reducer_id, reducer_progress[reducer_id], reducer_details[reducer_id - 1][0], reducer_details[reducer_id - 1][1])).start()
+
+    sleep(2)
+
     # Reducer Barrier
     all_reducers_finished = False
     while not all_reducers_finished:
-        sleep(1)
-        for reducer_id in reducer_progress:
-            logger.info(f"Reducer {reducer_id} status is: {reducer_progress[reducer_id]}")
-        for reducer_id in mapper_progress:
-            if reducer_progress[reducer_id] == "FAILED":
-                p = Process(target=handle_reducer, args=(reducer_id, database_server, database_port, master_address, master_port,))
+        sleep(4)
+        for reducer_id in reducer_status:
+            if reducer_status[reducer_id] == "PROCESSING":
+                continue
+            if reducer_status[reducer_id] == "FAILED":
+                logger.info(f"Starting reducer {reducer_id} again on {reducer_details[reducer_id - 1][0]}:{reducer_details[reducer_id - 1][1]}")
+                p = Process(target=handle_reducer, args=(reducer_id, database_server, database_port, master_address, master_port, reducer_details[reducer_id - 1][0], reducer_details[reducer_id - 1][1],))
                 p.start()
+                sleep(2)
+                threading.Thread(target = reducer_progress_checker, args = (reducer_id, reducer_progress[reducer_id], reducer_details[reducer_id - 1][0], reducer_details[reducer_id - 1][1])).start()
+                sleep(2)
+                reducer_progress[reducer_id] = p
+                reducer_status[reducer_id] = "PROCESSING"
                 break
-            if reducer_progress[reducer_id] != 'DONE':
-                break
-            all_reducers_finished = True
+            if not reducer_set:
+                all_reducers_finished = True
 
+    sleep(3)
     logger.info("All the Reducers have Finished Processing")
-    
-    db_server.stop_database_server()
-    logger.info("Stopped Database Server")
-    server.shutdown()
+
+    # db_server.stop_database_server()
+    # logger.info("Stopped Database Server")
     logger.info("Finished Task. Terminating")
+    os.kill(os.getpid(), signal.SIGKILL)
 
     
     # sys.exit(0)
     
-
-    
-
-
-
-
-    
-
-    
-
-    
-
-
-
-
-
-
-
-
-
 
 
 
@@ -208,19 +315,12 @@ if __name__ == '__main__':
 # Implement Group by, which will accumulated the same keys
 # implemen Hash function, so that we can assign same keys to the same reducer function
 
-# If a mapper or reducer fails, then master will start that process again. --> fault tolerence
 
 
-# should I consider upper and lower case words as 2 seperate??
-# check our group by implementation
+
 
 # should we return the mepper output to master and then store in KV store??
 # what if master fails????
-# Should we have fixed number of mappers and reduces?? or should it vary based in the inout size???
-# how to make sure mapper process all the words without fail?? and if it fails what to do??
 
 
 
-
-# Dependencies
-# 1) python-dotenv
