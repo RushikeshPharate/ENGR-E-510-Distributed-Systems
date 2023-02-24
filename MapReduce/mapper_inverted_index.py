@@ -4,7 +4,7 @@ import sys
 import json
 import xmlrpc.client
 import xmlrpc.server
-from time import sleep
+from time import sleep, time
 import threading
 import signal
 import random
@@ -33,6 +33,11 @@ def get_reducer_id(str_input, no_of_reducers):
         hash_value = (hash_value * 31 + ord(char)) % int(no_of_reducers)
     return str(hash_value + 1)
 
+def get_file_name_and_word_index(start_byte, file_offset):
+    for file, start_end_range in file_offset.items():
+        if start_byte in range(start_end_range[0], start_end_range[1]):
+            return file, start_byte - start_end_range[0]
+
 
 def mapper():
     global mapper_progress
@@ -55,30 +60,40 @@ def mapper():
         
         # if random.randint(1,4) == 2:
         #     raise Exception("For testing the Fault Tolerence"
-        import pdb
-        pdb.set_trace()
-        print("ASD")
+
         input_files_offset = m_server.get_input_files_offset()
-        print(input_files_offset)
-        
+        # print(f"input file offset: {input_files_offset}")
+
         data = m_server.get_mapper_input(mapper_id, mapper_start_byte, mapper_end_byte)
-        print(data)
+        mapper_output = {}
+        word_match_dict  = {}
+        for match in re.finditer(r'\S+', data):
+            index, word = match.start(), match.group()
+            # print(f"Mapper {mapper_id} index: {index}, {word}")
+            mapper_progress = ((index + 1) / (int(mapper_end_byte) - int(mapper_start_byte))) * 100
+            file_name, file_index = get_file_name_and_word_index(int(mapper_start_byte) + index, input_files_offset)
+            # print(f"Mapper {mapper_id} file return : {file_name} , {file_index}")
+            if word not in word_match_dict:
+                word_match_dict[word] = []
+            word_match_dict[word].append([file_name, file_index])
+
+        # print(f"Mapper {mapper_id} Word match dict : {word_match_dict}")
+        for word in word_match_dict:
+            reducer_id = get_reducer_id(word, no_of_reducers)
+            if reducer_id not in mapper_output:
+                mapper_output[reducer_id] = []
+            mapper_output[reducer_id].append({word: word_match_dict[word]})
         
-        # words = data.split()
-        # l = len(words)
-        # mapper_output = {}
-        # for i, word in enumerate(words):
-        #     mapper_progress = ((i + 1) / l) * 100
-        #     new_str = re.sub('[^a-zA-Z0-9]', '', word)
-        #     reducer_id = get_reducer_id(new_str, no_of_reducers)
-        #     if reducer_id not in mapper_output:
-        #         mapper_output[reducer_id] = []
-        #     mapper_output[reducer_id].append((word,1))
-        # # print(f"Mapper {mapper_id} output: {mapper_output}")
-        # result = m_server.set_mapper_output(mapper_output)
-        # # print(f"Mapper {mapper_id} End")
-        
+        # start = time()
+        result = m_server.set_mapper_output(mapper_output)
+        # print(f"Time taken to post in DB by Mapper {mapper_id} is : {time() - start}")
+        # print(f"Mapper {mapper_id} output: {mapper_output}")
+        # print(mapper_progress)
+        mapper_progress = 100
+        # print(f"Mapper {mapper_id} End")
+
     except Exception as e:
+        print(e)
         os.kill(os.getpid(), signal.SIGKILL)
 
 if __name__ == "__main__":

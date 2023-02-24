@@ -70,7 +70,6 @@ def get_reducer_input(reducer_id):
 
 def set_reducer_output(reduce):
     lock.acquire()
-   
     with open("./output/reducers_output.txt", "r") as f:
         reducer_output = json.loads(f.read())
         f.close()
@@ -86,7 +85,6 @@ def set_reducer_output(reduce):
         # f.write(json.dumps(reducer_output), ensure_ascii=False)
         json.dump(reducer_output, f, ensure_ascii=False)
         f.close()
-    print("end set_reducer_output")
     lock.release()
     return True
 

@@ -70,6 +70,7 @@ def split_input(no_of_mappers):
         if file.endswith(".txt"):
             f = open(f"./inputFiles/{file}", "r")
             f_combined.write(f.read())
+            f_combined.write('\n')
             offset_end = f_combined.tell()
             input_files_offset[file] = [offset_start, offset_end]
             offset_start = offset_end
@@ -77,7 +78,7 @@ def split_input(no_of_mappers):
     f_combined.close()
 
     f_combined = open("./mapperInput/combinedTextFile.txt", "r")
-    logger.info(f"Total {offset_end} bytes to read")
+    logger.info(f"Total {offset_end} bytes to process")
     bytes_per_mapper = offset_end // no_of_mappers
     start = 0
     
@@ -112,6 +113,13 @@ def mapper_progress_checker(mapper_id, p, mapper_address, mapper_port):
     temp1 = -1
     temp2 = -2
     temp3 = -3
+    temp4 = -4
+    temp5 = -5
+    temp6 = -6
+    temp7 = -7
+    temp8 = -8
+    temp9 = -9
+    temp10 = -10
     while prog != 100:
         try:
             prog = int(mapper_server.get_mapper_progress())
@@ -123,10 +131,17 @@ def mapper_progress_checker(mapper_id, p, mapper_address, mapper_port):
             sleep(2)
             mapper_status[mapper_id] = "FAILED"
             return
+        temp10 = temp9
+        temp9 = temp8
+        temp8 = temp7
+        temp7 = temp6
+        temp6 = temp5
+        temp5 = temp4
+        temp4 = temp3
         temp3 = temp2
         temp2 = temp1
         temp1 = prog
-        if prog != 0 and temp1 == temp2 == temp3:
+        if prog != 0 and temp1 == temp2 == temp3 == temp4 == temp5:
             logger.error(f"Mapper {mapper_id} is not processing - [No Progress]")
             logger.info(f"Terminating mapper {mapper_id}")
             try:
@@ -152,8 +167,10 @@ def mapper_progress_checker(mapper_id, p, mapper_address, mapper_port):
                 sleep(2)
                 mapper_status[mapper_id] = "FAILED"
                 return
-
-        sleep(1)
+        if prog >= 97:
+            sleep(10)
+        else:
+            sleep(1)
         logger.info(f"Mapper {mapper_id} progress: {prog}%")
     logger.info(f"Mapper {mapper_id} finished processing")
     try:
@@ -175,6 +192,13 @@ def reducer_progress_checker(reducer_id, p, reducer_address, reducer_port):
     temp1 = -1
     temp2 = -2
     temp3 = -3
+    temp4 = -4
+    temp5 = -5
+    temp6 = -6
+    temp7 = -7
+    temp8 = -8
+    temp9 = -9
+    temp10 = -10
     while prog != 100:
         try:
             prog = int(reducer_server.get_reducer_progress())
@@ -186,10 +210,17 @@ def reducer_progress_checker(reducer_id, p, reducer_address, reducer_port):
             sleep(2)
             reducer_status[reducer_id] = "FAILED"
             return
+        temp10 = temp9
+        temp9 = temp8
+        temp8 = temp7
+        temp7 = temp6
+        temp6 = temp5
+        temp5 = temp4
+        temp4 = temp3
         temp3 = temp2
         temp2 = temp1
         temp1 = prog
-        if prog != 0 and temp1 == temp2 == temp3:
+        if prog != 0 and temp1 == temp2 == temp3 == temp4 == temp5:
             logger.error(f"Reducer {reducer_id} is not processing - [No Progress]")
             logger.info(f"Terminating reducer {reducer_id}")
             try:
@@ -216,7 +247,10 @@ def reducer_progress_checker(reducer_id, p, reducer_address, reducer_port):
                 reducer_status[reducer_id] = "FAILED"
                 return
 
-        sleep(1)
+        if prog >= 97:
+            sleep(10)
+        else:
+            sleep(1)
         logger.info(f"Reducer {reducer_id} progress: {prog}%")
 
     logger.info(f"Reducer {reducer_id} finished processing")
@@ -267,9 +301,7 @@ if __name__ == '__main__':
 
     master_address = data["MASTER_ADDRESS"]
     master_port = int(data["MASTER_PORT"])
-    # database_server = data["DATABASE_SERVER"]
     database_server = data["MASTER_ADDRESS"]
-    # database_port = int(data["DATABASE_PORT"])
     database_port = int(data["MASTER_PORT"])
     no_of_mappers = int(data["NO_OF_MAPPERS"])
     no_of_reducers = int(data["NO_OF_REDUCERS"])
@@ -288,16 +320,13 @@ if __name__ == '__main__':
     sleep(2)
 
     db_server = xmlrpc.client.ServerProxy(f'http://{master_address}:{master_port}/')
-    # # logger.info("Connected to database server")
     
     f = open("./mapperInput/combinedTextFile.txt", "w")
     f.close()
 
     mapper_assign, input_files_offset = split_input(no_of_mappers)
-    # print(input_files_offset)
-    # print(mapper_assign)
     db_server.set_input_files_offset(input_files_offset)
-    # logger.info(f"Starting {no_of_mappers} mappers")
+    logger.info(f"Starting {no_of_mappers} mappers")
      
     mapper_progress = {}
     mapper_status = {}
@@ -312,12 +341,13 @@ if __name__ == '__main__':
 
     sleep(3)
 
-    # # Mapper Barrier
-    # logger.info("Barrier is UP")
-    # for mapper_id in mapper_progress:
-    #     threading.Thread(target = mapper_progress_checker, args = (mapper_id, mapper_progress[mapper_id], mapper_details[mapper_id - 1][0], mapper_details[mapper_id - 1][1])).start()
+    # Mapper Barrier
+    logger.info("Barrier is UP")
+    logger.info(f"Invoking status checker for {no_of_mappers} mappers")
+    for mapper_id in mapper_progress:
+        threading.Thread(target = mapper_progress_checker, args = (mapper_id, mapper_progress[mapper_id], mapper_details[mapper_id - 1][0], mapper_details[mapper_id - 1][1])).start()
     
-    # sleep(2)
+    sleep(2)
 
     all_mappers_finished = False
     while not all_mappers_finished:
@@ -332,14 +362,13 @@ if __name__ == '__main__':
                 sleep(2)
                 threading.Thread(target = mapper_progress_checker, args = (mapper_id, mapper_progress[mapper_id], mapper_details[mapper_id - 1][0], mapper_details[mapper_id - 1][1])).start()
                 sleep(2)
-                # logger.info(f"MAPPER {mapper_id} IS STARTED AGAIN")
                 mapper_progress[mapper_id] = p
                 mapper_status[mapper_id] = "PROCESSING"
                 break
             if not mapper_set:
                 all_mappers_finished = True
     sleep(3)
-    # print(mapper_status)
+
     logger.info("All the Mappers have Finished Processing and Barrier is down")
 
     logger.info(f"Starting {no_of_reducers} reducers")
@@ -356,6 +385,7 @@ if __name__ == '__main__':
     
     sleep(3)
 
+    logger.info(f"Invoking status checker for {no_of_reducers} reducers")
     for reducer_id in reducer_progress:
         threading.Thread(target = reducer_progress_checker, args = (reducer_id, reducer_progress[reducer_id], reducer_details[reducer_id - 1][0], reducer_details[reducer_id - 1][1])).start()
 
