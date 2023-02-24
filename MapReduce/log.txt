@@ -1,10 +1,5 @@
-[2023-02-23 03:46:00] [INFO ] Master Node started on 0.0.0.0:1071
-[2023-02-23 03:46:00] [INFO ] Database Server started on 0.0.0.0:3896
-[2023-02-23 03:46:02] [INFO ] Connected to database server
-[2023-02-23 03:46:06] [INFO ] Got input data from database server
-[2023-02-23 03:46:13] [INFO ] Divided input into chunk of 423336 words and assigned it to 3 mappers
-[2023-02-23 03:46:13] [INFO ] Starting 3 mappers
-[2023-02-23 03:46:13] [INFO ] Mapper 1 is up
-[2023-02-23 03:46:13] [INFO ] Mapper 2 is up
-[2023-02-23 03:46:13] [INFO ] Mapper 3 is up
-[2023-02-23 03:46:16] [INFO ] Barrier is UP
+[2023-02-24 03:58:31] [INFO ] Master Node started on 0.0.0.0:3896
+[2023-02-24 03:58:31] [INFO ] Process for handling data operations started
+[2023-02-24 03:58:33] [INFO ] Total 82 bytes to read
+[2023-02-24 03:58:33] [INFO ] Mapper 1 will process 82 bytes
+[2023-02-24 03:58:33] [INFO ] Mapper 1 is up

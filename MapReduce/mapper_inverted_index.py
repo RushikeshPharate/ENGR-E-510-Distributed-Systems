@@ -55,21 +55,28 @@ def mapper():
         
         # if random.randint(1,4) == 2:
         #     raise Exception("For testing the Fault Tolerence"
-
+        import pdb
+        pdb.set_trace()
+        print("ASD")
+        input_files_offset = m_server.get_input_files_offset()
+        print(input_files_offset)
+        
         data = m_server.get_mapper_input(mapper_id, mapper_start_byte, mapper_end_byte)
-        words = data.split()
-        l = len(words)
-        mapper_output = {}
-        for i, word in enumerate(words):
-            mapper_progress = ((i + 1) / l) * 100
-            new_str = re.sub('[^a-zA-Z0-9]', '', word)
-            reducer_id = get_reducer_id(new_str, no_of_reducers)
-            if reducer_id not in mapper_output:
-                mapper_output[reducer_id] = []
-            mapper_output[reducer_id].append((word,1))
-        # print(f"Mapper {mapper_id} output: {mapper_output}")
-        result = m_server.set_mapper_output(mapper_output)
-        # print(f"Mapper {mapper_id} End")
+        print(data)
+        
+        # words = data.split()
+        # l = len(words)
+        # mapper_output = {}
+        # for i, word in enumerate(words):
+        #     mapper_progress = ((i + 1) / l) * 100
+        #     new_str = re.sub('[^a-zA-Z0-9]', '', word)
+        #     reducer_id = get_reducer_id(new_str, no_of_reducers)
+        #     if reducer_id not in mapper_output:
+        #         mapper_output[reducer_id] = []
+        #     mapper_output[reducer_id].append((word,1))
+        # # print(f"Mapper {mapper_id} output: {mapper_output}")
+        # result = m_server.set_mapper_output(mapper_output)
+        # # print(f"Mapper {mapper_id} End")
         
     except Exception as e:
         os.kill(os.getpid(), signal.SIGKILL)
