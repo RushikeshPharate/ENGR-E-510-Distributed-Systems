@@ -53,8 +53,9 @@ def mapper():
         
         m_server = xmlrpc.client.ServerProxy(f'http://{master_address}:{master_port}/')
         
-        # if random.randint(1,4) == 2:
-        #     raise Exception("For testing the Fault Tolerence"
+        # Below two lines are for the sole purpose of testing the fault tolerence
+        # if random.randint(1,3) == 2:
+        #     raise Exception("For testing the Fault Tolerence")
 
         data = m_server.get_mapper_input(mapper_id, mapper_start_byte, mapper_end_byte)
         words = data.split()

@@ -423,24 +423,3 @@ if __name__ == '__main__':
     logger.info("Finished Task. Terminating")
     os.kill(os.getpid(), signal.SIGKILL)
 
-
-
-
-# Implement Master process, who handles all these below processes
-
-# Create new process for all mappers and reducers 
-# All the mappers should get approximate same amount of data to process
-# Mappers and reduces should run in parellel
-
-# implement barrier, which will wait for all mapper to finish
-# Implement Group by, which will accumulated the same keys
-# implement Hash function, so that we can assign same keys to the same reducer function
-
-
-# should we return the mepper output to master and then store in KV store??
-# what if master fails????
-
-
-# known issues
-# Dividing input into bytes results in some broken words -> Consider a word starts at byte 10 and end ends in 20 and we are using 2 mappers
-# mapper 1 is responsible for first 12 bytes and remaining bytes will be processed by mapper 2. This will result in the words spliting in two.

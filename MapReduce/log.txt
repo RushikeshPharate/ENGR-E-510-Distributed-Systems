@@ -1,35 +1,31 @@
-[2023-02-24 14:16:46] [INFO ] Master Node started on 0.0.0.0:3896
-[2023-02-24 14:16:46] [INFO ] Process for handling data operations started
-[2023-02-24 14:16:48] [INFO ] Total 160 bytes to process
-[2023-02-24 14:16:48] [INFO ] Mapper 1 will process 84 bytes
-[2023-02-24 14:16:48] [INFO ] Mapper 2 will process 76 bytes
-[2023-02-24 14:16:48] [INFO ] Starting 2 mappers
-[2023-02-24 14:16:48] [INFO ] Mapper 1 is up
-[2023-02-24 14:16:48] [INFO ] Mapper 2 is up
-[2023-02-24 14:16:51] [INFO ] Barrier is UP
-[2023-02-24 14:16:51] [INFO ] Invoking status checker for 2
-[2023-02-24 14:16:52] [INFO ] Mapper 1 progress: 0%
-[2023-02-24 14:16:52] [INFO ] Mapper 2 progress: 0%
-[2023-02-24 14:17:05] [INFO ] Mapper 1 progress: 100%
-[2023-02-24 14:17:05] [INFO ] Mapper 1 finished processing
-[2023-02-24 14:17:05] [INFO ] Mapper 2 progress: 100%
-[2023-02-24 14:17:05] [INFO ] Mapper 2 finished processing
-[2023-02-24 14:17:12] [INFO ] All the Mappers have Finished Processing and Barrier is down
-[2023-02-24 14:17:12] [INFO ] Starting 3 reducers
-[2023-02-24 14:17:12] [INFO ] Reducer 1 is up
-[2023-02-24 14:17:12] [INFO ] Reducer 2 is up
-[2023-02-24 14:17:12] [INFO ] Reducer 3 is up
-[2023-02-24 14:17:15] [INFO ] Invoking status checker for 2
-[2023-02-24 14:17:16] [INFO ] Reducer 1 progress: 0%
-[2023-02-24 14:17:16] [INFO ] Reducer 2 progress: 0%
-[2023-02-24 14:17:16] [INFO ] Reducer 3 progress: 0%
-[2023-02-24 14:17:31] [INFO ] Reducer 1 progress: 100%
-[2023-02-24 14:17:31] [INFO ] Reducer 1 finished processing
-[2023-02-24 14:17:31] [INFO ] Reducer 2 progress: 100%
-[2023-02-24 14:17:31] [INFO ] Reducer 2 finished processing
-[2023-02-24 14:17:31] [INFO ] Reducer 3 progress: 100%
-[2023-02-24 14:17:31] [INFO ] Reducer 3 finished processing
-[2023-02-24 14:17:36] [INFO ] All the Reducers have Finished Processing
-[2023-02-24 14:17:36] [INFO ] Database processes terminated
-[2023-02-24 14:17:36] [INFO ] Run took: 50.17411136627197 seconds
-[2023-02-24 14:17:36] [INFO ] Finished Task. Terminating
+[2023-02-24 19:57:43] [INFO ] Master Node started on 0.0.0.0:3896
+[2023-02-24 19:57:43] [INFO ] Process for handling data operations started
+[2023-02-24 19:57:45] [INFO ] Total 160 bytes to process
+[2023-02-24 19:57:45] [INFO ] Mapper 1 will process 84 bytes
+[2023-02-24 19:57:45] [INFO ] Mapper 2 will process 76 bytes
+[2023-02-24 19:57:45] [INFO ] Starting 2 mappers
+[2023-02-24 19:57:45] [INFO ] Mapper 1 is up
+[2023-02-24 19:57:45] [INFO ] Mapper 2 is up
+[2023-02-24 19:57:48] [INFO ] Barrier is UP
+[2023-02-24 19:57:48] [INFO ] Invoking status checker for 2 mappers
+[2023-02-24 19:57:49] [INFO ] Mapper 1 progress: 0%
+[2023-02-24 19:57:49] [INFO ] Mapper 2 progress: 0%
+[2023-02-24 19:58:02] [INFO ] Mapper 1 progress: 100%
+[2023-02-24 19:58:02] [INFO ] Mapper 1 finished processing
+[2023-02-24 19:58:02] [INFO ] Mapper 2 progress: 100%
+[2023-02-24 19:58:02] [INFO ] Mapper 2 finished processing
+[2023-02-24 19:58:09] [INFO ] All the Mappers have Finished Processing and Barrier is down
+[2023-02-24 19:58:09] [INFO ] Starting 2 reducers
+[2023-02-24 19:58:09] [INFO ] Reducer 1 is up
+[2023-02-24 19:58:09] [INFO ] Reducer 2 is up
+[2023-02-24 19:58:12] [INFO ] Invoking status checker for 2 reducers
+[2023-02-24 19:58:13] [INFO ] Reducer 2 progress: 0%
+[2023-02-24 19:58:13] [INFO ] Reducer 1 progress: 0%
+[2023-02-24 19:58:28] [INFO ] Reducer 2 progress: 100%
+[2023-02-24 19:58:28] [INFO ] Reducer 2 finished processing
+[2023-02-24 19:58:28] [INFO ] Reducer 1 progress: 100%
+[2023-02-24 19:58:28] [INFO ] Reducer 1 finished processing
+[2023-02-24 19:58:33] [INFO ] All the Reducers have Finished Processing
+[2023-02-24 19:58:33] [INFO ] Database processes terminated
+[2023-02-24 19:58:33] [INFO ] Run took: 50.16609787940979 seconds
+[2023-02-24 19:58:33] [INFO ] Finished Task. Terminating

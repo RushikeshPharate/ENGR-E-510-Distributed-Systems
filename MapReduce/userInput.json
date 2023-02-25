@@ -2,9 +2,9 @@
     "MASTER_ADDRESS" : "0.0.0.0",
     "MASTER_PORT" : 3896,
     "NO_OF_MAPPERS" : 2,
-    "MAPPER_TO_USE" : "mapper_inverted_index.py",
+    "MAPPER_TO_USE" : "mapper_word_count.py",
     "MAPPER_DETAILS" : [["0.0.0.0", 5456], ["0.0.0.0", 5457], ["0.0.0.0", 5458], ["0.0.0.0", 5459]], 
-    "NO_OF_REDUCERS" : 3,
-    "REDUCER_TO_USE" : "reducer_inverted_index.py",
+    "NO_OF_REDUCERS" : 2,
+    "REDUCER_TO_USE" : "reducer_word_count.py",
     "REDUCER_DETAILS" :  [["0.0.0.0", 6456], ["0.0.0.0", 6457], ["0.0.0.0", 6458], ["0.0.0.0", 6459]]
 }

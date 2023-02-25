@@ -10,22 +10,7 @@ import json
 
 lock = Lock()
 
-def get_input_data():
-    words = []
-    for file in os.listdir("./inputFiles/"):
-        if file.endswith(".txt"):
-            f = open(f"./inputFiles/{file}", "r")
-            for word in f.read().split():
-                new_str = re.sub('[^a-zA-Z0-9]', '', word)
-                words.append(new_str)
-    return words
 
-
-def set_master_split(mapper_assign_dict):
-    with open("./mapperInput/mappers_assign.txt", "w") as f:
-        f.write(json.dumps(mapper_assign_dict))
-        f.close()
-    return True
 
 
 def get_mapper_input(mapper_id, mapper_start_byte, mapper_end_byte):
@@ -99,9 +84,6 @@ def main():
     database_server  = sys.argv[1]
     database_port = sys.argv[2]
 
-    f = open("./mapperInput/mappers_assign.txt", "w")
-    f.close()
-
     f = open("./mappersOutput/mappers_output.txt", "w")
     f.write(json.dumps({}))
     f.close()
@@ -111,8 +93,6 @@ def main():
     f.close()
 
     with xmlrpc.server.SimpleXMLRPCServer((str(database_server), int(database_port)), logRequests=False, allow_none=True) as server:
-        # server.register_function(get_input_data, "get_input_data")
-        # server.register_function(set_master_split, "set_master_split")
         server.register_function(get_mapper_input, "get_mapper_input")
         server.register_function(set_mapper_output, "set_mapper_output")
         server.register_function(get_reducer_input, "get_reducer_input")

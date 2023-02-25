@@ -58,8 +58,9 @@ def mapper():
         
         m_server = xmlrpc.client.ServerProxy(f'http://{master_address}:{master_port}/')
         
-        # if random.randint(1,4) == 2:
-        #     raise Exception("For testing the Fault Tolerence"
+        # Below two lines are for the sole purpose of testing the fault tolerence
+        # if random.randint(1,3) == 2:
+        #     raise Exception("For testing the Fault Tolerence")
 
         input_files_offset = m_server.get_input_files_offset()
         # print(f"input file offset: {input_files_offset}")
@@ -93,7 +94,7 @@ def mapper():
         # print(f"Mapper {mapper_id} End")
 
     except Exception as e:
-        print(e)
+        # print(e)
         os.kill(os.getpid(), signal.SIGKILL)
 
 if __name__ == "__main__":

@@ -39,7 +39,8 @@ def reducer():
         sleep(3)
         m_server = xmlrpc.client.ServerProxy(f'http://{master_address}:{master_port}/')
 
-        # if random.randint(1,5) == 2:
+        # Below two lines are for the sole purpose of testing the fault tolerence
+        # if random.randint(1,3) == 2:
         #     raise Exception("For testing the Fault Tolerence")
 
         reducer_input = m_server.get_reducer_input(reducer_id)
@@ -51,7 +52,7 @@ def reducer():
         
         m_server.set_reducer_output(reducer_output)
     
-        print(f"Reducer {reducer_id} End")
+        # print(f"Reducer {reducer_id} End")
     except Exception as e:
          os.kill(os.getpid(), signal.SIGKILL)
     
