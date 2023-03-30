@@ -9,8 +9,7 @@ if __name__ == "__main__":
     server_port = int(sys.argv[2])
 
     server = xmlrpc.client.ServerProxy(f'http://{server_address}:{server_port}/')
-    for i in range(1):
-        print("Get ID is: " , server.get_id())
+    print("Current ID is: " , server.get_id())
     
 
 

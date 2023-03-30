@@ -1,4 +1,6 @@
 import os
+import threading
+
 import sys
 import json
 import xmlrpc.client
@@ -13,6 +15,10 @@ from collections import deque
 
 from time import sleep, time
 
+global lock
+lock = threading.Lock()
+
+
 def setup_custom_logger(name):
     formatter = logging.Formatter(fmt='[%(asctime)s] [%(levelname)-5s] %(message)s',
                                   datefmt='%Y-%m-%d %H:%M:%S')
@@ -26,51 +32,94 @@ def setup_custom_logger(name):
     logger.addHandler(screen_handler)
     return logger
 
-def update_id(num):
+
+def update_id(num, s_id):
     global id_variable
     global logger
+    global received_response_from_primary
+    global server_id
 
     logger.info(f"Updated id from {id_variable} to {int(num)} on server {server_id}")
     id_variable = int(num)
+    if int(s_id) == int(server_id):
+        received_response_from_primary = True
     return True
 
-def insert_into_queue(s_id):
 
-    
+def process_message(s_id):
+    global message_queue
     global id_variable
-    global server_address_details
-    # global p_server
     global s_clients
     global logger
-    global update_queue
-    
 
-    logger.info(f"Primary server received an message from server {s_id}")
-    
+    lock.acquire()
+
     temp = id_variable
     id_variable += 1 
+    
+    logger.info(f"Updated id from {temp} to {id_variable} on server {server_id}")
     
     for s in s_clients:
         if s == str(s_id):
             continue
-        flag = s_clients[s].update_id(str(id_variable))
-    logger.info(f"Updated id from {temp} to {id_variable} on server {server_id}")
+        flag = s_clients[s].update_id(str(id_variable), str(s_id))
+    if str(s_id) != "1":
+        f = s_clients[str(s_id)].update_id(str(id_variable), str(s_id))
+    else:
+        update_id(str(id_variable), str(s_id))
+    
+    sleep(1)
+    lock.release()
+
     return id_variable
 
-def get_id():
-    global p_server
-    global id_variable
-    global logger
 
-    logger.info(f"Server {server_id} received get_id() request")
+def insert_into_queue(s_id):
+
+    global id_variable
+    global server_address_details
+    global s_clients
+    global logger
+    global message_queue
+
+    logger.info(f"Primary server received an message from server {s_id}")
+    
+    th = threading.Thread(target = process_message, args = (s_id,))
+    th.daemon = True
+    th.start()
+    th.join()
+
+def send_to_primary():
+    global p_server
+ 
     if server_id != 1:
         ans = p_server.insert_into_queue(server_id)
     else:
         ans = insert_into_queue(server_id)
+    return
+
+def get_id():
     
-    logger.info(f"Updated id from {id_variable} to {ans} on server {server_id}")
-    id_variable = ans
-    return ans
+    lock.acquire()
+
+    global p_server
+    global id_variable
+    global logger
+    global received_response_from_primary
+
+    logger.info(f"Server {server_id} received get_id() request")
+    th = threading.Thread(target = send_to_primary)
+    th.daemon = True
+    th.start()
+
+    lock.release()
+    
+    while True:
+        sleep(0.5)
+        if received_response_from_primary:
+            received_response_from_primary = False
+            return id_variable
+    
 
 
 def create_rpc_server(server_id, server_address, server_port):
@@ -81,13 +130,20 @@ def create_rpc_server(server_id, server_address, server_port):
         if server_id == 1:
             server.register_function(insert_into_queue, "insert_into_queue")
 
-        server.register_function(get_id, "get_id")
+        # server.register_function(get_id, "get_id")
 
 
         server.serve_forever()
 
 
+def create_rpc_server_for_client_requests(server_id, server_address, server_port):
+    global logger
 
+    logger.info(f"SERVER {server_id} CAN HANDLE CLIENT REQUESTS ON {server_address}:{server_port}")
+    
+    with xmlrpc.server.SimpleXMLRPCServer((server_address, int(server_port)), logRequests=False,allow_none=True) as server:
+        server.register_function(get_id, "get_id")
+        server.serve_forever()
 
 if __name__ == '__main__':
 
@@ -97,10 +153,11 @@ if __name__ == '__main__':
     global s_clients
     global logger
     global server_id
-    global update_queue
+    global message_queue
+    global received_response_from_primary
 
-    update_queue = deque()
-
+    message_queue = deque()
+    received_response_from_primary = False
     id_variable = 0
 
     server_id = int(sys.argv[1])
@@ -124,7 +181,9 @@ if __name__ == '__main__':
     try:
         threading.Thread(target = create_rpc_server, args = (server_id, server_address, server_port, )).start()
         sleep(3)
-
+        threading.Thread(target = create_rpc_server_for_client_requests, args = (server_id, server_address, int(server_port) + 1000 , )).start()
+        sleep(3)
+        
         # connection to primary server
         if server_id != 1:
             p_server = xmlrpc.client.ServerProxy(f'http://{primary_server_address}:{primary_server_port}/')

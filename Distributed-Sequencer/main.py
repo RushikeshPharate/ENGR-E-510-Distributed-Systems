@@ -75,7 +75,7 @@ if __name__ == '__main__':
         server.start()
         server_details = {}
         server_details[i] = server
-        logger.info(f"Started server {i} on {server_address_details[str(i)][0]}:{server_address_details[str(i)][1]}")
+        # logger.info(f"Started server {i} on {server_address_details[str(i)][0]}:{server_address_details[str(i)][1]}")
         # sleep(1)
 
     # print("Server Details: ", server_details)
