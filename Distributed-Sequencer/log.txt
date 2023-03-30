@@ -1,0 +1,14 @@
+[2023-03-29 20:01:09] [INFO ] Server 5 created an connection to primary server
+[2023-03-29 20:01:09] [INFO ] Server 5 is READY
+[2023-03-29 20:01:10] [INFO ] Updated id from 0 to 1 on server 5
+[2023-03-29 20:01:12] [INFO ] Updated id from 1 to 2 on server 5
+[2023-03-29 20:01:14] [INFO ] Updated id from 2 to 3 on server 5
+[2023-03-29 20:01:12] [INFO ] Updated id from 1 to 2 on server 2
+[2023-03-29 20:01:14] [INFO ] Server 2 received get_id() request
+[2023-03-29 20:01:14] [INFO ] Updated id from 2 to 3 on server 2
+:01:10] [INFO ] Primary server received an message from server 2
+[2023-03-29 20:01:10] [INFO ] Updated id from 0 to 1 on server 1
+[2023-03-29 20:01:12] [INFO ] Primary server received an message from server 2
+[2023-03-29 20:01:12] [INFO ] Updated id from 1 to 2 on server 1
+[2023-03-29 20:01:14] [INFO ] Primary server received an message from server 2
+[2023-03-29 20:01:14] [INFO ] Updated id from 2 to 3 on server 1
