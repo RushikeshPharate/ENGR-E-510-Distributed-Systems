@@ -1,50 +1,37 @@
-[2023-04-01 09:59:14] [INFO ] SERVER 5 CAN HANDLE CLIENT REQUESTS ON 0.0.0.0:6489
-[2023-04-01 09:59:16] [INFO ] Server 5 is READY
-[2023-04-01 09:59:24] [INFO ] Updated id from 0 to 1 on server 5
-[2023-04-01 09:59:43] [INFO ] Updated id from 1 to 2 on server 5
-[2023-04-01 09:59:44] [INFO ] Updated id from 2 to 3 on server 5
-[2023-04-01 09:59:45] [INFO ] Updated id from 3 to 4 on server 5
-[2023-04-01 09:59:46] [INFO ] Updated id from 4 to 5 on server 5
-[2023-04-01 09:59:47] [INFO ] Updated id from 5 to 6 on server 5
-[2023-04-01 09:59:48] [INFO ] Updated id from 6 to 7 on server 5
-[2023-04-01 09:59:49] [INFO ] Updated id from 7 to 8 on server 5
-[2023-04-01 09:59:50] [INFO ] Updated id from 8 to 9 on server 5
-[2023-04-01 09:59:51] [INFO ] Updated id from 9 to 10 on server 5
-[2023-04-01 09:59:52] [INFO ] Updated id from 10 to 11 on server 5
-[2023-04-01 10:00:29] [INFO ] Updated id from 11 to 12 on server 5
-[2023-04-01 10:00:30] [INFO ] Updated id from 12 to 13 on server 5
-[2023-04-01 10:00:31] [INFO ] Updated id from 13 to 14 on server 5
-[2023-04-01 10:00:32] [INFO ] Updated id from 14 to 15 on server 5
-[2023-04-01 10:00:33] [INFO ] Updated id from 15 to 16 on server 5
-[2023-04-01 10:00:34] [INFO ] Updated id from 16 to 17 on server 5
-59:50] [INFO ] Updated id from 8 to 9 on server 2
-[2023-04-01 09:59:50] [INFO ] Server 2 received get_id() request
-[2023-04-01 09:59:51] [INFO ] Updated id from 9 to 10 on server 2
-[2023-04-01 09:59:51] [INFO ] Server 2 received get_id() request
-[2023-04-01 09:59:52] [INFO ] Updated id from 10 to 11 on server 2
-[2023-04-01 10:00:29] [INFO ] Server 2 received get_id() request
-[2023-04-01 10:00:29] [INFO ] Server 2 received get_id() request
-[2023-04-01 10:00:29] [INFO ] Server 2 received get_id() request
-[2023-04-01 10:00:29] [INFO ] Server 2 received get_id() request
-[2023-04-01 10:00:29] [INFO ] Updated id from 11 to 12 on server 2
-[2023-04-01 10:00:30] [INFO ] Updated id from 12 to 13 on server 2
-[2023-04-01 10:00:31] [INFO ] Updated id from 13 to 14 on server 2
-[2023-04-01 10:00:32] [INFO ] Updated id from 14 to 15 on server 2
-[2023-04-01 10:00:33] [INFO ] Updated id from 15 to 16 on server 2
-[2023-04-01 10:00:34] [INFO ] Updated id from 16 to 17 on server 2
-d() request
-[2023-04-01 10:00:29] [INFO ] Primary server received an message from server 2
-[2023-04-01 10:00:29] [INFO ] Server 1 received get_id() request
-[2023-04-01 10:00:29] [INFO ] Primary server received an message from server 1
-[2023-04-01 10:00:29] [INFO ] Updated id from 11 to 12 on server 1
-[2023-04-01 10:00:29] [INFO ] Primary server received an message from server 2
-[2023-04-01 10:00:29] [INFO ] Primary server received an message from server 2
-[2023-04-01 10:00:29] [INFO ] Primary server received an message from server 2
-[2023-04-01 10:00:29] [INFO ] Primary server received an message from server 1
-[2023-04-01 10:00:30] [INFO ] Updated id from 12 to 13 on server 1
-[2023-04-01 10:00:30] [INFO ] Updated id from 13 to 13 on server 1
-[2023-04-01 10:00:31] [INFO ] Updated id from 13 to 14 on server 1
-[2023-04-01 10:00:32] [INFO ] Updated id from 14 to 15 on server 1
-[2023-04-01 10:00:33] [INFO ] Updated id from 15 to 16 on server 1
-[2023-04-01 10:00:34] [INFO ] Updated id from 16 to 17 on server 1
-[2023-04-01 10:00:34] [INFO ] Updated id from 17 to 17 on server 1
+[2023-04-01 14:12:50] [INFO ] SERVER 3 CAN HANDLE CLIENT REQUESTS ON 0.0.0.0:6487
+[2023-04-01 14:12:52] [INFO ] Server 3 is READY
+[2023-04-01 14:19:20] [INFO ] Server 3 received get_id() request
+[2023-04-01 14:19:20] [INFO ] Updated id from 0 to 1 on server 3
+[2023-04-01 14:19:21] [INFO ] Updated id from 1 to 2 on server 2
+[2023-04-01 14:19:22] [INFO ] Updated id from 2 to 3 on server 3
+[2023-04-01 14:24:19] [INFO ] Updated id from 3 to 4 on server 3
+[2023-04-01 14:24:20] [INFO ] Updated id from 4 to 5 on server 3
+[2023-04-01 14:24:21] [INFO ] Updated id from 5 to 6 on server 3
+[2023-04-01 14:24:22] [INFO ] Updated id from 6 to 7 on server 3
+[2023-04-01 14:24:23] [INFO ] Updated id from 7 to 8 on server 3
+[2023-04-01 14:24:24] [INFO ] Updated id from 8 to 9 on server 3
+[2023-04-01 14:28:12] [INFO ] Updated id from 9 to 10 on server 3
+[2023-04-01 14:28:13] [INFO ] Updated id from 10 to 11 on server 3
+[2023-04-01 14:28:14] [INFO ] Updated id from 11 to 12 on server 3
+[2023-04-01 14:28:15] [INFO ] Updated id from 12 to 13 on server 3
+4-01 14:24:23] [INFO ] Server 2 received get_id() request
+[2023-04-01 14:24:24] [INFO ] Updated id from 8 to 9 on server 2
+[2023-04-01 14:28:12] [INFO ] Server 2 received get_id() request
+[2023-04-01 14:28:12] [INFO ] Server 2 received get_id() request
+[2023-04-01 14:28:12] [INFO ] Server 2 received get_id() request
+[2023-04-01 14:28:12] [INFO ] Server 2 received get_id() request
+[2023-04-01 14:28:12] [INFO ] Updated id from 9 to 10 on server 2
+[2023-04-01 14:28:13] [INFO ] Updated id from 10 to 11 on server 2
+[2023-04-01 14:28:14] [INFO ] Updated id from 11 to 12 on server 2
+[2023-04-01 14:28:15] [INFO ] Updated id from 12 to 13 on server 2
+on server 1
+[2023-04-01 14:24:23] [INFO ] Primary server received an message from server 2
+[2023-04-01 14:24:24] [INFO ] Updated id from 8 to 9 on server 1
+[2023-04-01 14:28:12] [INFO ] Primary server received an message from server 2
+[2023-04-01 14:28:12] [INFO ] Updated id from 9 to 10 on server 1
+[2023-04-01 14:28:12] [INFO ] Primary server received an message from server 2
+[2023-04-01 14:28:12] [INFO ] Primary server received an message from server 2
+[2023-04-01 14:28:12] [INFO ] Primary server received an message from server 2
+[2023-04-01 14:28:13] [INFO ] Updated id from 10 to 11 on server 1
+[2023-04-01 14:28:14] [INFO ] Updated id from 11 to 12 on server 1
+[2023-04-01 14:28:15] [INFO ] Updated id from 12 to 13 on server 1
