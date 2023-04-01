@@ -1,5 +1,6 @@
 {
     "MASTER_ADDRESS" : "0.0.0.0",
     "MASTER_PORT" : 3896,
-    "NO_OF_SERVERS" : 5
+    "NO_OF_SERVERS" : 5,
+    "PORT_START_RANGE": 5485
 }
