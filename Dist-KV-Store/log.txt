@@ -1,0 +1,17 @@
+[2023-04-29 22:56:00.913] [INFO ] SERVER 7 CAN HANDLE CLIENT REQUESTS ON localhost:6491
+[2023-04-29 22:56:02.915] [INFO ] Server 7 is READY
+[2023-04-29 22:56:54.828] [INFO ] SET(x, 51) finished on server 9
+[2023-04-29 22:56:54.828] [INFO ] Updated logical clock value from 0 to 1 for variable x on server 9
+able x on server 10 is 0
+[2023-04-29 22:56:48.825] [INFO ] Waiting for server 10's logical clock: 0 to catch up to clients logical clock: 1 for variable x
+[2023-04-29 22:56:48.825] [INFO ] Blocking execution of GET(x) request
+[2023-04-29 22:56:55.841] [INFO ] SET(x, 51) finished on server 10
+[2023-04-29 22:56:55.841] [INFO ] Updated logical clock value from 0 to 1 for variable x on server 10
+[2023-04-29 22:56:56.033] [INFO ] Finally catched up..... Server 10's logical clock: 1, Get requests logical clock: 1 for variable x
+[2023-04-29 22:56:56.033] [INFO ] GET(x) = 51 operation ends on server 10 with logical clock value 1
+mary Server created an connection to server 10
+[2023-04-29 22:56:02.922] [INFO ] Server 1 is READY
+[2023-04-29 22:56:46.602] [INFO ] Primary server received an SET(x, 51) message from server 2
+[2023-04-29 22:56:46.617] [INFO ] Primary server starting an broadcast for SET(x, 51)
+[2023-04-29 22:56:46.674] [INFO ] SET(x, 51) finished on server 1
+[2023-04-29 22:56:46.674] [INFO ] Updated logical clock value from 0 to 1 for variable x on server 1

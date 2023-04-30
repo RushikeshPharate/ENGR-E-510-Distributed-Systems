@@ -1,0 +1,6 @@
+{
+    "MASTER_ADDRESS" : "localhost",
+    "MASTER_PORT" : 3896,
+    "NO_OF_SERVERS" : 10,
+    "PORT_START_RANGE": 5485
+}
