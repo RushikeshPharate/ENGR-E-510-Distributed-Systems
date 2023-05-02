@@ -13,7 +13,7 @@ if __name__ == "__main__":
     if len(sys.argv) == 6:
         val = sys.argv[5]
 
-    
+
     if action == "SET":
         x = time.time()
         server = xmlrpc.client.ServerProxy(f'http://{server_address}:{server_port}/')
