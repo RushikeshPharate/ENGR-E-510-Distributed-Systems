@@ -133,6 +133,10 @@ When a client is started, the logs will be generated in the server terminal and 
 
 ## Performance Evaluation:
 
+| Consistency Model | Linearizability (millisedonds) | Sequential (millisedonds) | Eventual (millisedonds)     | Causal (millisedonds)                |
+| :----:            |    :----:       | :----:     |   :----:    |   :----:                |
+| SET request (avg of 100 requests and 10 servers)       | 278.77        | 288.72   | 63.96 |234.40 |
+| GET request (avg of 100 requests and 10 servers)        |  158.36      |62.62| 63.42 |66.01 | 
 
 
 
