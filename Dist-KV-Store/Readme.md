@@ -146,11 +146,6 @@ Please Note: For causal consistency, the GET requests are conditionally blocking
 ![model vs time](https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/blob/main/Dist-KV-Store/Images/model_vs_time.png)
 
 
-
-https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/blob/main/Dist-KV-Store/Images/model_vs_time.png
-
-
-
 As you can clearly see from the graph, overall Eventual consistency model is the fastest. The second fastest is the Causal and after that comes Sequential model. The slowest amongst 4 is the Linearizability.
 
 
