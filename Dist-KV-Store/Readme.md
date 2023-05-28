@@ -139,19 +139,12 @@ When a client is started, the logs will be generated in the server terminal and 
 | GET request (avg of 100 requests and 10 servers)        |  158.36      |62.62| 63.42 |66.01 | 
 
 
-
 Please Note: For causal consistency, the GET requests are conditionally blocking so ideally the latency should be higher than 66.01 milliseconds. As I was not able to create an circumstance for 100 requests to wait, this is just normal Non-Blocking GET request
 
-
-
-
-
+![model vs time](https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/tree/main/Dist-KV-Store/images/model_vs_time.png)
 
 
 As you can clearly see from the graph, overall Eventual consistency model is the fastest. The second fastest is the Causal and after that comes Sequential model. The slowest amongst 4 is the Linearizability.
-
-
-
 
 
 ## Challenges:
@@ -178,7 +171,7 @@ Sequence of request:
 - SET x 1 on server 2
 - GET x on server 3 & SET x 3 on server 2 → simultaneous requests
 
-![Architecture for Merra Data](https://github.com/airavata-courses/Zilean/blob/main/images/architecture/MerraArchitechture.jpeg)
+![linear](https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/tree/main/Dist-KV-Store/images/linear.png)
 
 Server Logs:
 
@@ -235,9 +228,6 @@ Please Choose Consistency Level
 Note the sequence of operations for simultaneous requests is same on all the servers
 First SET x 3 is broadcasted to all the 3 servers and then GET x is broadcasted.
 
-Logs:
-
-![Architecture for Merra Data](https://github.com/airavata-courses/Zilean/blob/main/images/architecture/MerraArchitechture.jpeg)
 
 
 ### Sequential Consistency:
@@ -249,9 +239,10 @@ Sequence of request:
 - SET x 7 on server 2
 - GET x on server 3 & SET x 3 on server 2 & SET r 5 on server 3 → Concurrent requests 
 
-![Architecture for Merra Data](https://github.com/airavata-courses/Zilean/blob/main/images/architecture/MerraArchitechture.jpeg)
+![sequential](https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/tree/main/Dist-KV-Store/images/sequential.png)
 
 Logs:
+
 ```
 rpharate@silo:~/ENGR-E-510-Distributed-Systems/Dist-KV-Store$ python3 main.py 
 Please Choose Consistency Level
@@ -301,10 +292,6 @@ Please Choose Consistency Level
 Note that GET x is a Non-Blocking operation and does not make an broadcast. Its basically and local read and returns immediately. In the above example, GET x (server 3), SET r 5 (server 3) & SET x 3 (server 2) are concurrent requests. Even though the SET x 3 request is received prior (few miliseconds difference) before GET x request, its on server 2 and the broadcast for that request has not yet received on server 3 and hence the current value of x is 7 on server 3. So, GET x will return x=7 immediately. 
 
 
-Logs screenshot:
-
-![Architecture for Merra Data](https://github.com/airavata-courses/Zilean/blob/main/images/architecture/MerraArchitechture.jpeg)
-
 
 ### Eventual Consistency:
 
@@ -315,7 +302,7 @@ Sequence of requests:
 - GET x on server 3 & SET x 3 on server 2 & SET r 5 on server 3 → Concurrent requests
 - GET r on server 3
 
-![Architecture for Merra Data](https://github.com/airavata-courses/Zilean/blob/main/images/architecture/MerraArchitechture.jpeg)
+![eventual](https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/tree/main/Dist-KV-Store/images/eventual.png)
 
 
 Logs:
@@ -372,10 +359,6 @@ As you can see in the logs both GET and  SET operations are Non-Blocking. GET re
 Server 3 receives SET r 5 request and it return immediately before the broadcast. The broadcast for this requests starts later. Now, when another server receives GET r requests it returns None immediately (local read) as that variable doesn’t exist in any of the server as the broadcast for it has not happened.
  
 
-Logs:
-
-![Architecture for Merra Data](https://github.com/airavata-courses/Zilean/blob/main/images/architecture/MerraArchitechture.jpeg)
-
 
 ### Causal Consistency:
 
@@ -388,7 +371,7 @@ Sequence of requests:
 - GET x on server 3
 - GET x on server 10
 
-![Architecture for Merra Data](https://github.com/airavata-courses/Zilean/blob/main/images/architecture/MerraArchitechture.jpeg)
+![causal](https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/tree/main/Dist-KV-Store/images/causal.png)
 
 
 Logs:
@@ -488,6 +471,8 @@ Now, we send the next GET(x) request to server 10 along with the updated logical
 As, you can see in the logs, this Blocking behavior is highlighted in yellow.
 
 
-Logs:
-![Architecture for Merra Data](https://github.com/airavata-courses/Zilean/blob/main/images/architecture/MerraArchitechture.jpeg)
+Comparison with sequential consistency:
+- In sequential consistency, the write operations are completely blocking meaning it will not return until all the servers have the same copy of the variable.
+- So, in this case, the partial broadcast condition will never occur where causal consistency is effective.
+
 
