@@ -141,7 +141,7 @@ When a client is started, the logs will be generated in the server terminal and 
 
 Please Note: For causal consistency, the GET requests are conditionally blocking so ideally the latency should be higher than 66.01 milliseconds. As I was not able to create an circumstance for 100 requests to wait, this is just normal Non-Blocking GET request
 
-![model vs time](https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/tree/main/Dist-KV-Store/images/model_vs_time.png)
+![model vs time](https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/blob/main/Dist-KV-Store/Images/model_vs_time.png)
 
 
 As you can clearly see from the graph, overall Eventual consistency model is the fastest. The second fastest is the Causal and after that comes Sequential model. The slowest amongst 4 is the Linearizability.
@@ -171,7 +171,7 @@ Sequence of request:
 - SET x 1 on server 2
 - GET x on server 3 & SET x 3 on server 2 → simultaneous requests
 
-![linear](https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/tree/main/Dist-KV-Store/images/linear.png)
+![linear](https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/blob/main/Dist-KV-Store/Images/linear.png)
 
 Server Logs:
 
@@ -239,7 +239,7 @@ Sequence of request:
 - SET x 7 on server 2
 - GET x on server 3 & SET x 3 on server 2 & SET r 5 on server 3 → Concurrent requests 
 
-![sequential](https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/tree/main/Dist-KV-Store/images/sequential.png)
+![sequential](https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/blob/main/Dist-KV-Store/Images/sequential.png)
 
 Logs:
 
@@ -302,7 +302,7 @@ Sequence of requests:
 - GET x on server 3 & SET x 3 on server 2 & SET r 5 on server 3 → Concurrent requests
 - GET r on server 3
 
-![eventual](https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/tree/main/Dist-KV-Store/images/eventual.png)
+![eventual](https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/blob/main/Dist-KV-Store/Images/eventual.png)
 
 
 Logs:
@@ -371,7 +371,7 @@ Sequence of requests:
 - GET x on server 3
 - GET x on server 10
 
-![causal](https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/tree/main/Dist-KV-Store/images/causal.png)
+![causal](https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/blob/main/Dist-KV-Store/Images/causal.png)
 
 
 Logs:
