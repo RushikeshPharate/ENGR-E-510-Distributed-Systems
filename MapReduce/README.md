@@ -32,14 +32,14 @@ Master reads all the text files stored in the ./inputFiles directory and divides
 - Spawn Reducers:
     - Spins up reducer process with initial configuration like the one mentioned for mapper
 - Stand a Barrier again:
-    -This barrier performs the same tasks as described in point 3 but for reducers
+    - This barrier performs the same tasks as described in point 3 but for reducers
 - Reducer Monitoring:
     - This barrier performs the same tasks as described in point 4 but for reducers
 - Database Server:
     - Database server is master process responsible for answering mapper and reducer calls for data.
 
 
-#### 2. Mppers
+#### 2. Mappers
 
 Mapper is a multithreaded process started by the Master (can be on a different host).
 Mappers perform the below tasks
@@ -108,7 +108,7 @@ Prerequisites
 
 ## Outputs
 
-1. Word Count
+### 1. Word Count
 
 - Word Count counts the number of occurrences of all the words in one or many documents
 - Each mapper generates a (word, 1) pair for each word and performs hashing / group by on it to get a reducer_id.
@@ -201,7 +201,7 @@ If you want to test this, please uncomment the 2 lines in respective mappers/red
 
 
 
-2. Inverted Index
+### 2. Inverted Index
 
 - Inverted Index returns the character offset and file name for all the words in all of the given text files.
 - Each mapper generates a {word: [file-name, offset]} for each word that is in range of the bytes assigned to that mapper
