@@ -1,6 +1,8 @@
 
 # Distributed Key-Value Store
 
+### [Original Report](https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/blob/main/Dist-KV-Store/Distributed%20KV%20Store.pdf)
+
 ## Overview
 
 Consistency model defines the valid sequence of operations in a given distributed system. There is a wide range of consistency models available today. The main ones that we are going to implement are
@@ -142,6 +144,11 @@ When a client is started, the logs will be generated in the server terminal and 
 Please Note: For causal consistency, the GET requests are conditionally blocking so ideally the latency should be higher than 66.01 milliseconds. As I was not able to create an circumstance for 100 requests to wait, this is just normal Non-Blocking GET request
 
 ![model vs time](https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/blob/main/Dist-KV-Store/Images/model_vs_time.png)
+
+
+
+https://github.com/RushikeshPharate/ENGR-E-510-Distributed-Systems/blob/main/Dist-KV-Store/Images/model_vs_time.png
+
 
 
 As you can clearly see from the graph, overall Eventual consistency model is the fastest. The second fastest is the Causal and after that comes Sequential model. The slowest amongst 4 is the Linearizability.
@@ -455,24 +462,23 @@ Please Choose Consistency Level
 ```
 
 As you can see in the logs, first, server 2 receives SET(x,51) request.
-    - Servers 2’s logical clock is 0 at this moment.
-    - Server 2 forwards this write request to primary
-    - Primary server increments the logical clock for this variable and sends this to server 2
-    - Server 2 updates its counter for variable x and then returns this value to client.
-    - Primary server broadcasts this update along with this new logical clock value to all other servers.
-    - Upon receiving the updated logical clock value from server 2 clients updates its clock for variable x
+- Servers 2’s logical clock is 0 at this moment.
+- Server 2 forwards this write request to primary
+- Primary server increments the logical clock for this variable and sends this to server 2
+- Server 2 updates its counter for variable x and then returns this value to client.
+- Primary server broadcasts this update along with this new logical clock value to all other servers.
+- Upon receiving the updated logical clock value from server 2 clients updates its clock for variable x
 Now, we send an GET(x) request to server 3 along with logical clock of 1 (updated from servers response to SET request)
-    - Server 3 has already received the broadcast message and hence it immediately return the value of x which is 51
+- Server 3 has already received the broadcast message and hence it immediately return the value of x which is 51
 Now, we send the next GET(x) request to server 10 along with the updated logical clock value.
-    - When this GET request comes to server 10, it does not process it and waits as its own logical clock for variable x is at 0.
-    - The GET request comes with logical clock of 1 which is from future.
-    - The logical clock of server 10 is at 0 because the broadcast for SET(x,51) has not yet reached.
-    - When server 10 receives this broadcast message it updates its logical clock for variable x to 1 and now can process the GET(x) request.
+- When this GET request comes to server 10, it does not process it and waits as its own logical clock for variable x is at 0.
+- The GET request comes with logical clock of 1 which is from future.
+- The logical clock of server 10 is at 0 because the broadcast for SET(x,51) has not yet reached.
+- When server 10 receives this broadcast message it updates its logical clock for variable x to 1 and now can process the GET(x) request.
 As, you can see in the logs, this Blocking behavior is highlighted in yellow.
 
 
 Comparison with sequential consistency:
 - In sequential consistency, the write operations are completely blocking meaning it will not return until all the servers have the same copy of the variable.
 - So, in this case, the partial broadcast condition will never occur where causal consistency is effective.
-
 
