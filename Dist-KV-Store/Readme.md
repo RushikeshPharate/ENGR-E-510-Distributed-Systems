@@ -96,10 +96,8 @@ Now, the algorithm:
 Please refer to the below table for a comparison of the nature of GET/SET requests for each consistency model
 
 | Consistency Model | Linearizability | Sequential | Eventual     | Causal                |
-| :----:            |    :----:       | :----:     |   :----:     |
-      :----:          |
-| SET request       | Blocking        | Blocking   | Non-Blocking |
-Somewhat Non-Blocking |
+| :----:            |    :----:       | :----:     |   :----:    |   :----:                |
+| SET request       | Blocking        | Blocking   | Non-Blocking |Somewhat Non-Blocking |
 | GET request        |  Blocking      |Non-Blocking| Non-Blocking |Somewhat Non-Blocking | 
 
 
@@ -154,16 +152,16 @@ As you can clearly see from the graph, overall Eventual consistency model is the
 
 ## Challenges:
 
-The most challenging part of the assignment of testing the behavior of each consistency model and making sure its correct. I used logging for this and have used custom delays in some places to demonstrate in the test cases.
-Another challenging part was developing the primary-based broadcast algorithm. I had used a similar algorithm for Distributed Sequencer algorithm so that helped.
+- The most challenging part of the assignment of testing the behavior of each consistency model and making sure its correct. I used logging for this and have used custom delays in some places to demonstrate in the test cases.
+- Another challenging part was developing the primary-based broadcast algorithm. I had used a similar algorithm for Distributed Sequencer algorithm so that helped.
 Causal consistency Implementation as the algorithm provided in the slides is not clear.
 
 
 
 ## Limitations and Future Improvement
 
-Current algorithm is very centered around primary and this will create performance issues and primary is doing most of the heavy lifting. To overcome this we can use a total-order multicast algorithm that will solve the performance issue but has its own complexity issues.
-If one of the server fails, the whole system might crash. This can be avoided if we use some kind of fault tolerance.
+- Current algorithm is very centered around primary and this will create performance issues and primary is doing most of the heavy lifting. To overcome this we can use a total-order multicast algorithm that will solve the performance issue but has its own complexity issues.
+- If one of the server fails, the whole system might crash. This can be avoided if we use some kind of fault tolerance.
 
 
 ## Test Cases:
@@ -172,9 +170,9 @@ If one of the server fails, the whole system might crash. This can be avoided if
 
 Servers 1 to 3 are running on 6485 to 6487 ports respectively
 Sequence of request:
-    - SET x 7 on server 2
-    - SET x 1 on server 2
-    - GET x on server 3 & SET x 3 on server 2 → simultaneous requests
+- SET x 7 on server 2
+- SET x 1 on server 2
+- GET x on server 3 & SET x 3 on server 2 → simultaneous requests
 
 ![Architecture for Merra Data](https://github.com/airavata-courses/Zilean/blob/main/images/architecture/MerraArchitechture.jpeg)
 
@@ -382,9 +380,9 @@ I have used 10 servers for this case. It was necessary to demonstrate the causal
 Servers 1 to 10 are running on 6485 to 6494 ports respectively
 
 Sequence of requests:
-    - SET x [random value] on server 2
-    - GET x on server 3
-    - GET x on server 10
+- SET x [random value] on server 2
+- GET x on server 3
+- GET x on server 10
 
 ![Architecture for Merra Data](https://github.com/airavata-courses/Zilean/blob/main/images/architecture/MerraArchitechture.jpeg)
 
